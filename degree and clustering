@@ -1,0 +1,96 @@
+#此为度计算
+import matplotlib.pyplot as plt
+from s_path import *
+import networkx as nx
+from pylab import *  # 显示节点的中文名称
+mpl.rcParams['font.sans-serif'] = ['SimHei']
+
+
+def degree(adjlist,node_all):  #计算各节点度
+  node_degree={}
+  for i in range(len(node_all)):
+    node_degree[node_all[i]]=len(adjlist[i])-1
+  print(node_degree)
+  return node_degree
+
+
+def every_node(adjlist_1):
+  node_deg2=[]  #各节点度
+  for i in range(len(adjlist_1)):
+    node_deg2.append(len(adjlist_1[i])-1)
+  print(node_deg2)
+  node_3=sort(node_deg2)
+  for i in range(10):
+      print(node_deg2.index(node_3[290-i]))
+  return node_deg2
+
+def deg_dis(node_degree):     #度分布图
+    deg_dis1=[0 for i in range(max(node_degree)+1)]
+    for j in range(len(node_degree)):
+        deg_dis1[node_degree[j]]=deg_dis1[node_degree[j]]+1
+    x=[]
+    for i in range(max(node_degree)+1):
+        x.append(i)
+    plt.bar(range(len(deg_dis1)),deg_dis1, tick_label=x)
+    plt.title('The degree of these nodes')
+    plt.xlabel('Degree')
+    plt.ylabel('Number of nodes')
+    plt.show()
+
+
+def deg_sole(node_degree,node_name):     #各节点度分布图
+    plt.bar(range(len(node_degree)),node_degree)
+    plt.title('The degree of these nodes')
+    plt.xlabel('Nodes')
+    plt.ylabel('Degree')
+    plt.show()
+
+
+def ave_degree(node_degree,node_all):#计算平均度
+    sum=0
+    for i in node_degree.values():
+        sum=sum+i
+    ave=sum*1.0/len(node_all)
+    print("%.2f"%ave)
+    node_Degree=round(ave,2)
+    return node_Degree
+
+if __name__ == '__main__':
+    from txt_list import *
+    from gen_list_matrix import *
+    (node_all,edge,A)=txt_list()
+    (adjlist,adjmatrix)=gen_list_matrix(node_all,A)
+    node_degree=degree(adjlist,node_all)
+    node_deg2=every_node(adjlist)
+    ave_Degree=ave_degree(node_degree,node_all)
+    deg_dis(node_deg2)
+    deg_sole(node_deg2,node_all)
+    
+    
+    #此为聚类系数计算
+   def clu_cof(node_all,adjlist): 
+   E = [0 for i in range(len(node_all))]
+   C = [0 for i in range(len(node_all))]
+   for i in range(len(node_all)):
+       if len(adjlist[i])-1==1:
+           E[i]=0
+           C[i]=0.0
+       else:
+           sum_e=0
+           for k in range(1,len(adjlist[i])-1):
+             for j in range(k,len(adjlist[i])-1):
+                if adjlist[i][j+1] in adjlist[adjlist[i][j]-1]:
+                  sum_e=sum_e+1
+           E[i]=sum_e
+           C[i]=2*E[i]/((len(adjlist[i])-1)*(len(adjlist[i])-2))
+   ave_C=sum(C)/len(C)
+   print(C)
+   return ave_C
+
+if __name__ == '__main__':
+    from txt_list import *
+    from gen_list_matrix import *
+    (node_all,edge,A)=txt_list()
+    (adjlist,adjmatrix)=gen_list_matrix(node_all,A)
+    ave_c = round(clu_cof(node_all, adjlist), 2)
+    print(ave_c)
